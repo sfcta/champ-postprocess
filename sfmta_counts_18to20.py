@@ -139,11 +139,18 @@ def bin_count_totals_by_champ_periods(count_totals):
         ordered=False,
         right=False,
     )
+
+    if len(count_totals) % (24 * 4) != 0:
+        raise RuntimeError(
+            "Data collection duration is not an integral multiple of 24 hours."
+        )
+    num_days_collected = len(count_totals) / 24 / 4
+
     binned_count_totals = (
         count_totals.groupby(binned_times)
-        .sum()  # BUG TODO this sums over multiple days!!! need to take daily average instead
+        .sum()  # sum over each 15min period, over all the collected days
         .reindex(champ_period_labels[1:])
-    )
+    ) / num_days_collected
     return binned_count_totals
 
 
