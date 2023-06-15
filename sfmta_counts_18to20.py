@@ -204,21 +204,22 @@ def compare_sfmta_counts_to_champ_network(
                     champ_nodes, champ_paths_found, direction
                 )
             except:
-                counts_extract_skipped.append([p.name, direction])
-                print("can't extract counts from", direction, p.name)
+                geomatch_direction_skipped.append([p.name, direction])
+                print(
+                    f"can't find direction {direction} in:",
+                    f"{primary_st_name}/{primary_st_type}",
+                    directions,
+                    cross_st_1_name,
+                    cross_st_2_name,
+                )
                 continue
             try:
                 count_totals = bin_count_totals_by_champ_periods(
                     get_counts_totals(load_counts_sheet(p.name, direction))
                 )
             except (ValueError, RuntimeError):
-                geomatch_direction_skipped.append([p.name, direction])
-                print(
-                    f"{primary_st_name}/{primary_st_type}",
-                    directions,
-                    cross_st_1_name,
-                    cross_st_2_name,
-                )
+                counts_extract_skipped.append([p.name, direction])
+                print("can't extract counts from", direction, p.name)
                 continue
             row = count_totals.to_dict()  # or maybe consider using OrderedDict
             # now join the count_totals to the champ_path
