@@ -141,7 +141,7 @@ def bin_count_totals_by_champ_periods(count_totals):
     )
     binned_count_totals = (
         count_totals.groupby(binned_times)
-        .sum()
+        .sum()  # BUG TODO this sums over multiple days!!! need to take daily average instead
         .reindex(champ_period_labels[1:])
     )
     return binned_count_totals
@@ -213,20 +213,36 @@ def compare_sfmta_counts_to_champ_network(
                     cross_st_2_name,
                 )
                 continue
+            row = count_totals.to_dict()  # or maybe consider using OrderedDict
             # now join the count_totals to the champ_path
             # add identifying info to the Series count_totals,
             # to prepare for turning into a row of the output_df later
-            count_totals["primary_st_name"] = primary_st_name
-            count_totals["primary_st_type"] = primary_st_type
-            count_totals["direction"] = direction
-            count_totals["cross_st_1_name"] = cross_st_1_name
-            count_totals["cross_st_2_name"] = cross_st_2_name
+            row["primary_st_name"] = primary_st_name
+            row["primary_st_type"] = primary_st_type
+            row["cross_st_1_name"] = cross_st_1_name
+            row["cross_st_2_name"] = cross_st_2_name
+            row["direction"] = direction
             for A, B in pairwise(champ_path):
-                # abusing mutability of count_totals here
-                count_totals["CHAMP_A"] = A
-                count_totals["CHAMP_B"] = B
-                comparison_df_rows.append(count_totals)
-    comparison_df = pd.DataFrame(comparison_df_rows)
+                # beware of mutability,
+                # thus not adding champ_nodes to row directly
+                comparison_df_rows.append(row | {"CHAMP_A": A, "CHAMP_B": B})
+    columns = [
+        "CHAMP_A",
+        "CHAMP_B",
+        "primary_st_name",
+        "primary_st_type",
+        "cross_st_1_name",
+        "cross_st_2_name",
+        "direction",
+        "EA",
+        "AM",
+        "MD",
+        "PM",
+        "EV",
+    ]
+    comparison_df = pd.DataFrame.from_records(
+        comparison_df_rows, columns=columns
+    )
     skipped = {
         "filename_parse_skipped": filename_parse_skipped,
         "counts_extract_skipped": counts_extract_skipped,
@@ -260,4 +276,4 @@ if __name__ == "__main__":
     )
     comparison_df.to_csv(comparison_df_filepath, index=False)
     with open(skipped_log_filepath, "w") as f:
-        f.write(json.dumps(skipped))
+        json.dump(skipped, f, indent=2)
