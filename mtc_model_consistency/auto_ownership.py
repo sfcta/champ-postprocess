@@ -26,10 +26,10 @@ def auto_ownership(model_run_dir, taz_filepath, out_dir, forecast_year):
         out_dir / f"F-ForecastAutoOwnership-superdst-{forecast_year}.csv"
     )
 
-    auto_ownership = hh.pivot_table(
-        index=["COUNTY"], columns="hhvehs", aggfunc="size"
-    ).to_csv(out_bycounty_filepath)
-    auto_ownership = hh.pivot_table(
+    hh.pivot_table(index=["COUNTY"], columns="hhvehs", aggfunc="size").to_csv(
+        out_bycounty_filepath
+    )
+    hh.pivot_table(
         index=["SUPERDST"], columns="hhvehs", aggfunc="size"
     ).to_csv(out_bysuperdst_filepath)
 
