@@ -1,4 +1,10 @@
-model_run_dir = 'X:\Projects\CMP\PBA2050\2050_SFTP_2021'
-taz_filepath = 'Y:\champ\landuse\p2021\pba50\2050\2-RunInputsChamp5Parking\tazdata.csv'
 out_dir = 'Q:\MTC\Model\ConsistencyReports\2023\Analysis\Data'
 forecast_year = 2050
+
+# [champ]
+model_run_dir = 'X:\Projects\CMP\PBA2050\2050_SFTP_2021'
+taz_filepath = 'Y:\champ\landuse\p2021\pba50\2050\2-RunInputsChamp5Parking\tazdata.csv'
+
+[mtc]
+taz_excel_filepath = 'Q:\Model Landuse\PBA2050\20210310\PBA50_FinalBlueprintLandUse_TAZdata.xlsx'
+taz_gis_filepath = 'Q:\GIS\Boundaries\MTC\bayarea_rtaz1454_rev1\bayarea_rtaz1454_rev1.shp'
