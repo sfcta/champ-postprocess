@@ -7,4 +7,4 @@ taz_filepath = 'Y:\champ\landuse\p2021\pba50\2050\2-RunInputsChamp5Parking\tazda
 
 [mtc]
 taz_excel_filepath = 'Q:\Model Landuse\PBA2050\20210310\PBA50_FinalBlueprintLandUse_TAZdata.xlsx'
-taz_gis_filepath = 'Q:\GIS\Boundaries\MTC\bayarea_rtaz1454_rev1\bayarea_rtaz1454_rev1.shp'
+taz_gis_filepath = 'Q:\GIS\Model\TAZ\MTC_TAZ\taz1454.shp'

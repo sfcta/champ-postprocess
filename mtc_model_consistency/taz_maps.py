@@ -9,8 +9,8 @@ from core import load_config, read_taz
 def plot_map(gdf, var, out_filepath_stem):
     assert var in {"hh", "emp"}
     ax = gdf.plot(f"{var}-diff-CHAMP_-_MTC", legend=True)
-    ax.set_xlim([542500, 557500])
-    ax.set_ylim([4172500, 4188000])
+    ax.set_xlim([5978000, 6026000])
+    ax.set_ylim([2085000, 2132000])
     plt.savefig(f"{out_filepath_stem}-{var}.png")
 
 
@@ -36,7 +36,9 @@ def taz_maps(
         usecols=["ZONE", "COUNTY", "TOTHH", "TOTEMP"],
     )
 
-    out_filepath_stem = Path(out_dir) / f"taz-diff-{forecast_year}"
+    out_filepath_stem = (
+        Path(out_dir) / f"C-ForecastYearDemographics-taz-diff-{forecast_year}"
+    )
 
     champ_taz = (
         champ_taz[champ_taz["COUNTY"] == 1]  # SF only
@@ -64,9 +66,7 @@ def taz_maps(
     )
 
     gdf = gpd.read_file(mtc_taz_gis_filepath)
-    # filter for SF; some SF TAZs have the county set as NaN,
-    # so you can't use the county to filter
-    gdf = gdf[gdf["SUPERD"] < 5]
+    gdf = gdf[gdf["COUNTY"] == 1]  # SF only
     gdf = gdf.merge(taz_comparison, left_on="TAZ1454", right_on="MTCTAZ")
 
     write_output(gdf, out_filepath_stem)
