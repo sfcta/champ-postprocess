@@ -1,22 +1,10 @@
-import argparse
-import tomllib
 from pathlib import Path
 
-import pandas as pd
+from core import load_config, read_hh_with_home_geog
 
 
 def auto_ownership(model_run_dir, taz_filepath, out_dir, forecast_year):
-    hh = pd.read_csv(
-        Path(model_run_dir) / "daysim" / "abm_output1" / "_household_2.dat",
-        sep=r"\s+",
-    )
-    taz = pd.read_csv(taz_filepath)
-    hh = pd.merge(
-        hh,
-        taz.loc[:, ["SFTAZ", "COUNTY", "SUPERDST"]],
-        left_on="hhtaz",
-        right_on="SFTAZ",
-    )
+    hh = read_hh_with_home_geog(model_run_dir, taz_filepath, {"hhvehs"})
 
     out_dir = Path(out_dir)
     out_bycounty_filepath = (
@@ -35,14 +23,7 @@ def auto_ownership(model_run_dir, taz_filepath, out_dir, forecast_year):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("config_filename")
-    args = parser.parse_args()
-    with open(
-        Path(__file__).parent.resolve() / "../configs" / args.config_filename,
-        "rb",
-    ) as f:
-        config = tomllib.load(f)
+    config = load_config()
     auto_ownership(
         config["model_run_dir"],
         config["taz_filepath"],
