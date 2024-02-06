@@ -3,7 +3,6 @@ from pathlib import Path
 
 import polars as pl
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("directory")
@@ -15,11 +14,11 @@ if __name__ == "__main__":
         filename_root = f"LOAD{champ_period}_FINAL"
         df = pl.scan_csv(
             Path(args.directory, f"{filename_root}.csv"),
+            separator=",",
+            quote_char="'",
             dtypes={col: pl.Float64 for col in veh_class_cols},
         ).with_columns(
             pl.sum_horizontal(veh_class_cols).alias("sum(V1_1..V18_1)")
-        ).select(
-            ["A", "B", "sum(V1_1..V18_1)"]
-        ).collect().write_csv(
+        ).select(["A", "B", "sum(V1_1..V18_1)"]).collect().write_csv(
             Path(args.directory, f"{filename_root}-veh_class_sum.csv")
         )
