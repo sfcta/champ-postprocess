@@ -14,23 +14,23 @@
 ; TODO allow output of V1_1 to V18_1 as an option
 
 IF ('%TP%' = 'AM')
-  HR_FACTOR = 0.348
+  HR_FACTOR = 0.348  ; peak 1-hour factor
   TP_DUR = 3
   LANE = 'LANE_AM'
 ELSEIF ('%TP%' = 'PM') 
-  HR_FACTOR = 0.337
+  HR_FACTOR = 0.337  ; peak 1-hour factor
   TP_DUR = 3
   LANE = 'LANE_PM'
 ELSEIF ('%TP%' = 'MD') 
-  HR_FACTOR = 0.154
+  HR_FACTOR = 0.154  ; peak 1-hour factor
   TP_DUR = 6.5
   LANE = 'LANE_OP'
 ELSEIF ('%TP%' = 'EV') 
-  HR_FACTOR = 0.173
+  HR_FACTOR = 0.173  ; peak 1-hour factor
   TP_DUR = 8.5
   LANE = 'LANE_OP'
 ELSEIF ('%TP%' = 'EA') 
-  HR_FACTOR = 0.463
+  HR_FACTOR = 0.463  ; peak 1-hour factor
   TP_DUR = 3
   LANE = 'LANE_OP'
 ENDIF
@@ -90,29 +90,31 @@ RUN PGM=NETWORK
     LOAD_SPD =CSPD_1
     LOAD_TIME=TIME_1
     
-    DA      = V1_1 + V4_1 + V7_1
-    SR2     = V2_1 + V5_1 + V8_1
-    SR3     = V3_1 + V6_1 + V9_1
-    COM     = V13_1+ V14_1+ V15_1
-    TRK     = V10_1+ V11_1+ V12_1
-    BUS     = BUSVOL_%TP%
-    TNC     = V16_1 + V17_1 + V18_1    
-    AUTOVOL = DA + SR2 + SR3
-    PAXVOL  = DA + 2*SR2 + 3.5*SR3
-    TOTVOL  = DA + SR2 + SR3 + COM + TRK + BUS + TNC
-    PCEVOL  = DA + SR2 + SR3 + COM + 2*TRK + 2*BUS + TNC
+    DA      = V1_1  + V4_1  + V7_1    ; drive alone
+    SR2     = V2_1  + V5_1  + V8_1    ; shared ride 2 people
+    SR3     = V3_1  + V6_1  + V9_1    ; shared ride 3+ people
+    COM     = V13_1 + V14_1 + V15_1   ; commercial vehicles
+    TRK     = V10_1 + V11_1 + V12_1   ; truck
+    BUS     = BUSVOL_%TP%             ; bus
+    TNC     = V16_1 + V17_1 + V18_1   ; TNC   
+    AUTOVOL = DA + SR2 + SR3          ; total no. of automobiles
+    PAXVOL  = DA + 2*SR2 + 3.5*SR3    ; total no. of people in autos (assuming
+                                      ; 3.5 people on average in each SR3) 
+    TOTVOL  = AUTOVOL + COM + TRK + BUS + TNC  ; total no. of vehicles
+    PCEVOL  = AUTOVOL + COM + 2*TRK + 2*BUS + TNC  ; passenger car equivalent
     
-    DA_1HR      = DA * @HR_FACTOR@
-    SR2_1HR     = SR2 * @HR_FACTOR@
-    SR3_1HR     = SR3 * @HR_FACTOR@
-    COM_1HR     = COM * @HR_FACTOR@
-    TRK_1HR     = TRK * @HR_FACTOR@
-    BUS_1HR     = BUS * (1/@TP_DUR@)
-    TNC_1HR     = TNC * @HR_FACTOR@
-    AUTOVOL_1HR = DA_1HR + SR2_1HR + SR3_1HR
-    PAXVOL_1HR  = DA_1HR + 2*SR2_1HR + 3.5*SR3_1HR
-    TOTVOL_1HR  = DA_1HR + SR2_1HR + SR3_1HR + COM_1HR + TRK_1HR + BUS_1HR + TNC_1HR
-    PCEVOL_1HR  = DA_1HR + SR2_1HR + SR3_1HR + COM_1HR + 2*TRK_1HR + 2*BUS_1HR + TNC_1HR
+    ; peak 1-hour volumes
+    DA_1HR  = DA  * @HR_FACTOR@
+    SR2_1HR = SR2 * @HR_FACTOR@
+    SR3_1HR = SR3 * @HR_FACTOR@
+    COM_1HR = COM * @HR_FACTOR@
+    TRK_1HR = TRK * @HR_FACTOR@
+    BUS_1HR = BUS * (1/@TP_DUR@)
+    TNC_1HR = TNC * @HR_FACTOR@
+    AUTOVOL_1HR = AUTOVOL * @HR_FACTOR@
+    PAXVOL_1HR  = PAXVOL  * @HR_FACTOR@
+    TOTVOL_1HR  = TOTVOL  * @HR_FACTOR@
+    PCEVOL_1HR  = PCEVOL  * @HR_FACTOR@
 
     VC_RATIO = 0
     IF (@LANE@>0)
