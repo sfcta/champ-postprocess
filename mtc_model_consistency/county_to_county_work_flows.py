@@ -43,8 +43,8 @@ def county_to_county_work_flows(
 if __name__ == "__main__":
     config = load_config()
     county_to_county_work_flows(
-        config["model_run_dir"],
-        config["taz_filepath"],
+        config["champ"]["forecast"]["model_run_dir"],
+        config["champ"]["forecast"]["taz_filepath"],
         config["out_dir"],
         config["forecast_year"],
     )

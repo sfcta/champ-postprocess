@@ -25,8 +25,8 @@ def auto_ownership(model_run_dir, taz_filepath, out_dir, forecast_year):
 if __name__ == "__main__":
     config = load_config()
     auto_ownership(
-        config["model_run_dir"],
-        config["taz_filepath"],
+        config["champ"]["forecast"]["model_run_dir"],
+        config["champ"]["forecast"]["taz_filepath"],
         config["out_dir"],
         config["forecast_year"],
     )

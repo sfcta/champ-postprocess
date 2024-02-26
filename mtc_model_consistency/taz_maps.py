@@ -14,42 +14,41 @@ def plot_map(gdf, var, out_filepath_stem):
     plt.savefig(f"{out_filepath_stem}-{var}.png")
 
 
-def write_output(gdf, out_filepath_stem):
+def write_map_output(gdf, out_filepath_stem):
     gdf.to_file(f"{out_filepath_stem}.gpkg")
     plot_map(gdf, "hh", out_filepath_stem)
     plot_map(gdf, "emp", out_filepath_stem)
 
 
 def taz_maps(
-    champ_taz_filepath,
+    champ_forecast_taz_filepath,
     mtc_taz_excel_filepath,
     mtc_taz_gis_filepath,
     out_dir,
     forecast_year,
 ):
-    champ_taz = read_taz(
-        champ_taz_filepath, usecols={"MTCTAZ", "HHLDS", "TOTALEMP"}
+    champ_forecast_taz = read_taz(
+        champ_forecast_taz_filepath, usecols={"MTCTAZ", "HHLDS", "TOTALEMP"}
     )
-    mtc_taz = pd.read_excel(
+    mtc_forecast_taz = pd.read_excel(
         mtc_taz_excel_filepath,
         sheet_name=str(forecast_year),
         usecols=["ZONE", "COUNTY", "TOTHH", "TOTEMP"],
     )
-
     out_filepath_stem = (
         Path(out_dir) / f"C-ForecastYearDemographics-taz-diff-{forecast_year}"
     )
 
-    champ_taz = (
-        champ_taz[champ_taz["COUNTY"] == 1]  # SF only
+    champ_forecast_taz = (
+        champ_forecast_taz[champ_forecast_taz["COUNTY"] == 1]  # SF only
         .rename(columns={"HHLDS": "HH-CHAMP", "TOTALEMP": "EMP-CHAMP"})
         .drop(columns=["SFTAZ", "COUNTY", "SUPERDST"])
         .groupby("MTCTAZ")
         .sum()  # sum households and employment
     )
 
-    mtc_taz = (
-        mtc_taz[mtc_taz["COUNTY"] == 1]  # SF only
+    mtc_forecast_taz = (
+        mtc_forecast_taz[mtc_forecast_taz["COUNTY"] == 1]  # SF only
         .rename(
             columns={"ZONE": "MTCTAZ", "TOTHH": "HH-MTC", "TOTEMP": "EMP-MTC"}
         )
@@ -57,7 +56,7 @@ def taz_maps(
         .set_index("MTCTAZ")
     )
 
-    taz_comparison = champ_taz.join(mtc_taz, on="MTCTAZ")
+    taz_comparison = champ_forecast_taz.join(mtc_forecast_taz, on="MTCTAZ")
     taz_comparison["hh-diff-CHAMP_-_MTC"] = (
         taz_comparison["HH-CHAMP"] - taz_comparison["HH-MTC"]
     )
@@ -69,13 +68,13 @@ def taz_maps(
     gdf = gdf[gdf["COUNTY"] == 1]  # SF only
     gdf = gdf.merge(taz_comparison, left_on="TAZ1454", right_on="MTCTAZ")
 
-    write_output(gdf, out_filepath_stem)
+    write_map_output(gdf, out_filepath_stem)
 
 
 if __name__ == "__main__":
     config = load_config()
     taz_maps(
-        config["taz_filepath"],
+        config["champ"]["forecast"]["taz_filepath"],
         config["mtc"]["taz_excel_filepath"],
         config["mtc"]["taz_gis_filepath"],
         config["out_dir"],
