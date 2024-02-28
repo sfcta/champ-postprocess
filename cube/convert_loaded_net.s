@@ -65,7 +65,7 @@ RUN PGM=NETWORK
               DA,SR2,SR3,COM,TRK,BUS,TNC,AUTOVOL,PAXVOL,TOTVOL,PCEVOL,
               DA_1HR,SR2_1HR,SR3_1HR,COM_1HR,TRK_1HR,BUS_1HR,TNC_1HR,
               AUTOVOL_1HR,PAXVOL_1HR,TOTVOL_1HR,PCEVOL_1HR,VC_RATIO
-    LINKO = %CUBENET%_converted.@LINKO_FILE_EXT@,FORMAT=@LINKO_FORMAT@,
+    LINKO = LOAD%TP%_FINAL_converted.@LINKO_FILE_EXT@,FORMAT=@LINKO_FORMAT@,
       INCLUDE=A,B,AT,FT,USE,CAP,STREETNAME,TYPE,MTYPE,DISTANCE,TOLL,
               LANE_AM,LANE_PM,LANE_OP,
               FF_SPD,FF_TIME,LOAD_SPD,LOAD_TIME,
@@ -93,24 +93,24 @@ RUN PGM=NETWORK
     DA      = V1_1  + V4_1  + V7_1    ; drive alone
     SR2     = V2_1  + V5_1  + V8_1    ; shared ride 2 people
     SR3     = V3_1  + V6_1  + V9_1    ; shared ride 3+ people
-    COM     = V13_1 + V14_1 + V15_1   ; commercial vehicles
     TRK     = V10_1 + V11_1 + V12_1   ; truck
-    BUS     = BUSVOL_%TP%             ; bus
+    COM     = V13_1 + V14_1 + V15_1   ; commercial vehicles
     TNC     = V16_1 + V17_1 + V18_1   ; TNC   
+    BUS     = BUSVOL_%TP%             ; bus
     AUTOVOL = DA + SR2 + SR3          ; total no. of automobiles
     PAXVOL  = DA + 2*SR2 + 3.5*SR3    ; total no. of people in autos (assuming
                                       ; 3.5 people on average in each SR3) 
-    TOTVOL  = AUTOVOL + COM + TRK + BUS + TNC  ; total no. of vehicles
-    PCEVOL  = AUTOVOL + COM + 2*TRK + 2*BUS + TNC  ; passenger car equivalent
+    TOTVOL  = AUTOVOL + TRK + COM + TNC + BUS  ; total no. of vehicles
+    PCEVOL  = AUTOVOL + 2*TRK + COM + TNC + 2*BUS  ; passenger car equivalent
     
     ; peak 1-hour volumes
     DA_1HR  = DA  * @HR_FACTOR@
     SR2_1HR = SR2 * @HR_FACTOR@
     SR3_1HR = SR3 * @HR_FACTOR@
-    COM_1HR = COM * @HR_FACTOR@
     TRK_1HR = TRK * @HR_FACTOR@
-    BUS_1HR = BUS * (1/@TP_DUR@)
+    COM_1HR = COM * @HR_FACTOR@
     TNC_1HR = TNC * @HR_FACTOR@
+    BUS_1HR = BUS * (1/@TP_DUR@)
     AUTOVOL_1HR = AUTOVOL * @HR_FACTOR@
     PAXVOL_1HR  = PAXVOL  * @HR_FACTOR@
     TOTVOL_1HR  = TOTVOL  * @HR_FACTOR@
