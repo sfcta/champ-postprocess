@@ -79,6 +79,24 @@ def read_hh_pers(model_run_dir, hh_usecols=None, pers_usecols=None):
     return pd.merge(hh, pers, on=["hhno"])
 
 
+def read_tours_pers(
+    model_run_dir,
+    tours_usecols=None,
+    pers_usecols=None,
+):
+    if tours_usecols:
+        tours_usecols = {"pno"} | set(tours_usecols)
+    else:
+        tours_usecols = {"pno"}
+    if pers_usecols:
+        pers_usecols = {"pno"} | set(pers_usecols)
+    else:
+        pers_usecols = {"pno"}
+    tours = read_tours(model_run_dir, usecols=tours_usecols)
+    pers = read_pers(model_run_dir, usecols=pers_usecols)
+    return pd.merge(pers, tours, on=["pno"])
+
+
 def read_tours_hh_pers(
     model_run_dir,
     tours_usecols=None,
@@ -146,10 +164,45 @@ def read_hh_with_home_geog(model_run_dir, taz_filepath, hh_usecols=None):
     return merge_home_geog(hh, taz)
 
 
+def read_pers_with_home_geog(
+    model_run_dir, taz_filepath, hh_usecols=None, pers_usecols=None
+):
+    if pers_usecols:
+        pers_usecols = {"hhno", "pno"} | set(pers_usecols)
+    else:
+        pers_usecols = {"hhno", "pno"}
+    hh = read_hh_with_home_geog(
+        model_run_dir, taz_filepath, hh_usecols=hh_usecols
+    )
+    pers = read_pers(model_run_dir, usecols=pers_usecols)
+    return pd.merge(hh, pers, on=["hhno"])
+
+
+def read_tours_with_home_geog(
+    model_run_dir,
+    taz_filepath,
+    hh_usecols=None,
+    pers_usecols=None,
+    tours_usecols=None,
+):
+    if tours_usecols:
+        tours_usecols = {"hhno", "pno"} | set(tours_usecols)
+    else:
+        tours_usecols = {"hhno", "pno"}
+    pers = read_pers_with_home_geog(
+        model_run_dir,
+        taz_filepath,
+        hh_usecols=hh_usecols,
+        pers_usecols=pers_usecols,
+    )
+    tours = read_tours(model_run_dir, usecols=tours_usecols)
+    return pd.merge(pers, tours, on=["hhno", "pno"])
+
+
 def time_period_conversion_champ_to_mtc(df):
     """
-    convert from 3hr (CHAMP) to 4hr (MTC) peaks while maintaining totals
-    the conversion factors have been used since 2019, and are derived from PeMS numbers
+    Convert from 3hr (CHAMP) to 4hr (MTC) peaks while maintaining totals.
+    The conversion factors have been used since 2019, and are derived from PeMS
     See Q:\MTC\Model\ConsistencyReports\2021\Analysis\12.HighwayAssignment.xlsx
     """
     return df.with_columns(
