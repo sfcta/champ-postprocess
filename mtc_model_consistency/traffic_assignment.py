@@ -66,7 +66,7 @@ def time_period_conversion_champ_to_mtc(champ_timeperiods_dict):
     """
     Convert from 3hr (CHAMP) to 4hr (MTC) peaks while maintaining totals.
     The conversion factors have been used since 2019, and are derived from PeMS
-    See Q:\MTC\Model\ConsistencyReports\2021\Analysis\12.HighwayAssignment.xlsx
+    See Q:/MTC/Model/ConsistencyReports/2021/Analysis/12.HighwayAssignment.xlsx
     """
     mtc_timeperiods_dict = {
         "EA": champ_timeperiods_dict["EA"] * 0.75178,  # 0300-0600
@@ -88,7 +88,7 @@ def time_period_conversion_champ_to_mtc(champ_timeperiods_dict):
 
 def traffic_assignment(model_run_dir, out_dir):
     mtc_timeperiods_dict = time_period_conversion_champ_to_mtc(
-        load_VMT_and_VHT_all_time_periods(model_run_dir)
+        load_VMT_and_VHT_all_time_periods(Path(model_run_dir))
     )
     dfs = []
     for t, df in mtc_timeperiods_dict.items():
@@ -111,7 +111,7 @@ def traffic_assignment(model_run_dir, out_dir):
     )[
         facility_types_mtc
     ].to_csv(
-        out_dir / "J-Traffic&TransitAssignment-VMTVHTSpeed-2050.csv"
+        Path(out_dir) / "J-Traffic&TransitAssignment-VMTVHTSpeed-2050.csv"
     )
 
 
