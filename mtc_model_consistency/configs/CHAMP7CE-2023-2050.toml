@@ -1,0 +1,15 @@
+out_dir = 'Q:\MTC\Model\ConsistencyReports\2025\Analysis\CHAMP7CE-2023-2050'
+base_year = 2023
+forecast_year = 2050
+
+[champ.base]
+# model_run_dir = 'X:\Projects\CHAMP7CE\Run17_2023_TaxScenario'
+taz_filepath = 'Y:\champ\landuse\y2023\y2023_taxscen_20250911\2-RunInputsChamp5Parking\tazdata.dbf'
+
+[champ.forecast]
+model_run_dir = 'X:\Projects\CHAMP7CE\Run4_2050_mgdlanes'
+taz_filepath = 'Y:\champ\landuse\p2025\pba50p_prelim\2050\2-RunInputsChamp5Parking\tazdata.dbf'
+
+[mtc]
+taz_excel_filepath = 'Q:\Model Landuse\PBA2050\20210310\PBA50_FinalBlueprintLandUse_TAZdata.xlsx'
+taz_gis_filepath = 'Q:\GIS\Model\TAZ\MTC_TAZ\taz1454.shp'
