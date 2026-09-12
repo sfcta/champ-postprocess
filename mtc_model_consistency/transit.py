@@ -73,13 +73,21 @@ def transit(out_dir):
     )
     boardings = (
         time_period_conversion_champ_to_mtc(
-            boardings.fill_null(strategy="zero")
+            boardings
+            .with_columns(
+                [pl.col(t).fill_null(0) for t in time_periods]
+            )
             .group_by(["Operator", "Technology"])
-            .sum()
-            .rename({t: f"CHAMP-{t}" for t in time_periods})
+            .agg(
+                [
+                    pl.col(t).sum().alias(f"CHAMP-{t}")
+                    for t in time_periods
+                ]
+            )
         )
         .select(
-            ["Operator", "Technology"] + [f"MTC-{t}" for t in time_periods]
+            ["Operator", "Technology"]
+            + [f"MTC-{t}" for t in time_periods]
         )
         .sort("Operator", "Technology")
     )
