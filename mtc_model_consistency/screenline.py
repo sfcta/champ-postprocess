@@ -6,6 +6,8 @@ from core import load_config, time_period_conversion_champ_to_mtc, time_periods
 
 
 def screenline(model_run_dir, out_dir):
+    model_run_dir = Path(model_run_dir)
+    out_dir = Path(out_dir)
     out_filepath = out_dir / "J-Traffic&TransitAssignment-screenline-2050.csv"
 
     screenline_AB = pl.read_csv(out_dir / "screenline-AB.csv").select(

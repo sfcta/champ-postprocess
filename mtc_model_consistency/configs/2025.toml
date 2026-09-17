@@ -1,0 +1,15 @@
+out_dir = 'Q:\MTC\Model\ConsistencyReports\2025\Analysis\CHAMP7CE-2023-2050\Data'
+base_year = 2023
+forecast_year = 2050
+
+[champ.base]
+##not used, could ignore it
+taz_filepath = 'X:\Projects\CHAMP7CE\Run18_2023_SFTPP2\tazdata.csv'
+
+[champ.forecast]
+model_run_dir = 'X:\Projects\SFTP2050Plus\y2050_bl_2025muni'
+taz_filepath = 'X:\Projects\SFTP2050Plus\y2050_bl_2025muni\tazdata.csv'
+
+[mtc]
+taz_excel_filepath = 'Q:\MTC\Plan Bay Area 2050+ (2025)\pba2050plus_data\TazData\PBA50Plus_FinalBlueprintLandUse_TAZdata.xlsx'
+taz_gis_filepath = 'Q:\GIS\Model\TAZ\MTC_TAZ\taz1454.shp'
